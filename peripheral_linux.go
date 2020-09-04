@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"strings"
 
@@ -44,7 +43,6 @@ func finish(op byte, h uint16, b []byte) bool {
 	done := b[0] == attOpError && b[1] == op && b[2] == byte(h) && b[3] == byte(h>>8)
 	e := attEcode(b[4])
 	if e != attEcodeAttrNotFound {
-		// log.Printf("unexpected protocol error: %s", e)
 		// FIXME: terminate the connection
 	}
 	return done
@@ -132,7 +130,6 @@ func (p *peripheral) DiscoverCharacteristics(cs []UUID, s *Service) ([]*Characte
 			u := UUID{b[5:l]}
 			s := searchService(p.svcs, h, vh)
 			if s == nil {
-				log.Printf("Can't find service range that contains 0x%04X - 0x%04X", h, vh)
 				return nil, fmt.Errorf("Can't find service range that contains 0x%04X - 0x%04X", h, vh)
 			}
 			c := &Characteristic{
@@ -382,7 +379,6 @@ func (p *peripheral) loop() {
 				case rspOp == attRspFor[reqOp]:
 				case rspOp == attOpError && r[1] == reqOp:
 				default:
-					log.Printf("Request 0x%02x got a mismatched response: 0x%02x", reqOp, rspOp)
 					// FIXME: terminate the connection?
 				}
 				req.rspc <- r
@@ -415,7 +411,6 @@ func (p *peripheral) loop() {
 		h := binary.LittleEndian.Uint16(b[1:3])
 		f := p.sub.fn(h)
 		if f == nil {
-			log.Printf("notified by unsubscribed handle")
 			// FIXME: terminate the connection?
 		} else {
 			go f(b[3:], nil)

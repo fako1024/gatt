@@ -1,7 +1,5 @@
 package gatt
 
-import "log"
-
 // attr is a BLE attribute. It is not exported;
 // managing attributes is an implementation detail.
 type attr struct {
@@ -69,15 +67,6 @@ func (r *attrRange) Subrange(start, end uint16) []attr {
 	return r.aa[startidx:endidx]
 }
 
-func dumpAttributes(aa []attr) {
-	log.Printf("Generating attribute table:")
-	log.Printf("handle\ttype\tprops\tsecure\tpvt\tvalue")
-	for _, a := range aa {
-		log.Printf("0x%04X\t0x%s\t0x%02X\t0x%02x\t%T\t[ % X ]",
-			a.h, a.typ, int(a.props), int(a.secure), a.pvt, a.value)
-	}
-}
-
 func generateAttributes(ss []*Service, base uint16) *attrRange {
 	var aa []attr
 	h := base
@@ -87,7 +76,7 @@ func generateAttributes(ss []*Service, base uint16) *attrRange {
 		h, a = generateServiceAttributes(s, h, i == last)
 		aa = append(aa, a...)
 	}
-	dumpAttributes(aa)
+
 	return &attrRange{aa: aa, base: base}
 }
 
