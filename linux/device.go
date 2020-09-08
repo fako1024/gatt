@@ -2,7 +2,6 @@ package linux
 
 import (
 	"errors"
-	"log"
 	"sync"
 	"syscall"
 	"unsafe"
@@ -35,7 +34,6 @@ func newDevice(n int, chk bool) (*device, error) {
 	for i := 0; i < int(req.devNum); i++ {
 		d, err := newSocket(fd, i, chk)
 		if err == nil {
-			log.Printf("dev: %s opened", d.name)
 			return d, err
 		}
 	}
@@ -51,20 +49,16 @@ func newSocket(fd, n int, chk bool) (*device, error) {
 	// Check the feature list returned feature list.
 	if chk && i.features[4]&0x40 == 0 {
 		err := errors.New("does not support LE")
-		log.Printf("dev: %s %s", name, err)
 		return nil, err
 	}
-	log.Printf("dev: %s up", name)
 	if err := gioctl.Ioctl(uintptr(fd), hciUpDevice, uintptr(n)); err != nil {
 		if err != syscall.EALREADY {
 			return nil, err
 		}
-		log.Printf("dev: %s reset", name)
 		if err := gioctl.Ioctl(uintptr(fd), hciResetDevice, uintptr(n)); err != nil {
 			return nil, err
 		}
 	}
-	log.Printf("dev: %s down", name)
 	if err := gioctl.Ioctl(uintptr(fd), hciDownDevice, uintptr(n)); err != nil {
 		return nil, err
 	}
@@ -76,10 +70,8 @@ func newSocket(fd, n int, chk bool) (*device, error) {
 		if err != syscall.EINVAL {
 			return nil, err
 		}
-		log.Printf("dev: %s can't bind to hci user channel, err: %s.", name, err)
 		sa := socket.SockaddrHCI{Dev: n, Channel: socket.HCI_CHANNEL_RAW}
 		if err := socket.Bind(fd, &sa); err != nil {
-			log.Printf("dev: %s can't bind to hci raw channel, err: %s.", name, err)
 			return nil, err
 		}
 	}
