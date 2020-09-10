@@ -1,5 +1,7 @@
 # Package gatt provides a Bluetooth Low Energy GATT implementation.
 
+![Go](https://github.com/fako1024/gatt/workflows/Go/badge.svg)
+
 Gatt (Generic Attribute Profile) is the protocol used to write BLE peripherals (servers) and centrals (clients).
 
 As a peripheral, you can create services, characteristics, and descriptors,
