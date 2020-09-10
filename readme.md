@@ -43,7 +43,7 @@ either be run as root, or be granted appropriate capabilities:
     <executable>
 
 ## Usage
-Please see [godoc.org](http://godoc.org/github.com/paypal/gatt) for documentation.
+Please see [godoc.org](http://godoc.org/github.com/fako1024/gatt) for documentation.
 
 ## Examples
 
@@ -96,7 +96,7 @@ OS X central, see http://stackoverflow.com/questions/20553957.
 
 ## Known Issues
 
-Currently OS X vesion  does not support subscribing to indications. 
+Currently OS X vesion  does not support subscribing to indications.
 Please check [#32](https://github.com/paypal/gatt/issues/32) for the status of this issue.
 
 ## REFERENCES

@@ -1,8 +1,8 @@
 package option
 
 import (
-	"github.com/paypal/gatt"
-	"github.com/paypal/gatt/linux/cmd"
+	"github.com/fako1024/gatt"
+	"github.com/fako1024/gatt/linux/cmd"
 )
 
 var DefaultClientOptions = []gatt.Option{

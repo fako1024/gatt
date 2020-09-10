@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/paypal/gatt/xpc"
+	"github.com/fako1024/gatt/xpc"
 )
 
 const (

@@ -5,7 +5,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/paypal/gatt/linux/cmd"
+	"github.com/fako1024/gatt/linux/cmd"
 )
 
 type aclData struct {

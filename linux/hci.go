@@ -6,8 +6,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/paypal/gatt/linux/cmd"
-	"github.com/paypal/gatt/linux/evt"
+	"github.com/fako1024/gatt/linux/cmd"
+	"github.com/fako1024/gatt/linux/evt"
 )
 
 type HCI struct {

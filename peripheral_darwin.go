@@ -3,7 +3,7 @@ package gatt
 import (
 	"errors"
 
-	"github.com/paypal/gatt/xpc"
+	"github.com/fako1024/gatt/xpc"
 )
 
 type peripheral struct {

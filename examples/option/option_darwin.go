@@ -1,6 +1,6 @@
 package option
 
-import "github.com/paypal/gatt"
+import "github.com/fako1024/gatt"
 
 var DefaultClientOptions = []gatt.Option{
 	gatt.MacDeviceRole(gatt.CentralManager),
