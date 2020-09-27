@@ -1,6 +1,9 @@
 # Package gatt provides a Bluetooth Low Energy GATT implementation.
 
-![Go](https://github.com/fako1024/gatt/workflows/Go/badge.svg)
+[![Github Release](https://img.shields.io/github/release/fako1024/gatt.svg)](https://github.com/fako1024/gatt/releases)
+[![GoDoc](https://godoc.org/github.com/fako1024/gatt?status.svg)](https://godoc.org/github.com/fako1024/gatt/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/fako1024/gatt)](https://goreportcard.com/report/github.com/fako1024/gatt)
+[![Build/Test Status](https://github.com/fako1024/gatt/workflows/Go/badge.svg)](https://github.com/fako1024/gatt/actions?query=workflow%3AGo)
 
 Gatt (Generic Attribute Profile) is the protocol used to write BLE peripherals (servers) and centrals (clients).
 
