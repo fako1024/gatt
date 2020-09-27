@@ -3,7 +3,6 @@ package linux
 import (
 	"fmt"
 	"io"
-	"log"
 
 	"github.com/fako1024/gatt/linux/cmd"
 )
@@ -168,7 +167,7 @@ func (c *conn) Close() error {
 // 0x15 LE Credit Based Connection response		0x0005
 // 0x16 LE Flow Control Credit					0x0005
 func (c *conn) handleSignal(a *aclData) error {
-	log.Printf("ignore l2cap signal:[ % X ]", a.b)
+	//log.Printf("ignore l2cap signal:[ % X ]", a.b)
 	// FIXME: handle LE signaling channel (CID: 5)
 	return nil
 }

@@ -9,7 +9,6 @@ import "C"
 import (
 	"errors"
 	"fmt"
-	"log"
 	r "reflect"
 	"unsafe"
 )
@@ -62,30 +61,24 @@ func (d Dict) MustGetUUID(k string) []byte {
 
 func (d Dict) GetString(k, defv string) string {
 	if v := d[k]; v != nil {
-		//log.Printf("GetString %s %#v\n", k, v)
 		return v.(string)
 	} else {
-		//log.Printf("GetString %s default %#v\n", k, defv)
 		return defv
 	}
 }
 
 func (d Dict) GetBytes(k string, defv []byte) []byte {
 	if v := d[k]; v != nil {
-		//log.Printf("GetBytes %s %#v\n", k, v)
 		return v.([]byte)
 	} else {
-		//log.Printf("GetBytes %s default %#v\n", k, defv)
 		return defv
 	}
 }
 
 func (d Dict) GetInt(k string, defv int) int {
 	if v := d[k]; v != nil {
-		//log.Printf("GetString %s %#v\n", k, v)
 		return int(v.(int64))
 	} else {
-		//log.Printf("GetString %s default %#v\n", k, defv)
 		return defv
 	}
 }
@@ -146,7 +139,7 @@ func GetUUID(v interface{}) UUID {
 		return uuid
 	}
 
-	log.Fatalf("invalid type for UUID: %#v", v)
+	panic("invalid type for UUID: %#v", v)
 	return UUID{}
 }
 
@@ -171,7 +164,6 @@ func XpcConnect(service string, eh XpcEventHandler) XPC {
 
 //export handleXpcEvent
 func handleXpcEvent(event C.xpc_object_t, p unsafe.Pointer) {
-	//log.Printf("handleXpcEvent %#v %#v\n", event, p)
 
 	t := C.xpc_get_type(event)
 	eh := *((*XpcEventHandler)(p))
@@ -183,17 +175,13 @@ func handleXpcEvent(event C.xpc_object_t, p unsafe.Pointer) {
 			// the connection is in an invalid state, and you do not need to
 			// call xpc_connection_cancel(). Just tear down any associated state
 			// here.
-			//log.Println("connection invalid")
 			eh.HandleXpcEvent(nil, CONNECTION_INVALID)
 		} else if event == C.ERROR_CONNECTION_INTERRUPTED {
-			//log.Println("connection interrupted")
 			eh.HandleXpcEvent(nil, CONNECTION_INTERRUPTED)
 		} else if event == C.ERROR_CONNECTION_TERMINATED {
 			// Handle per-connection termination cleanup.
-			//log.Println("connection terminated")
 			eh.HandleXpcEvent(nil, CONNECTION_TERMINATED)
 		} else {
-			//log.Println("got some error", event)
 			eh.HandleXpcEvent(nil, fmt.Errorf("%v", event))
 		}
 	} else {
@@ -262,7 +250,7 @@ func valueToXpc(val r.Value) C.xpc_object_t {
 		xv = valueToXpc(val.Elem())
 
 	default:
-		log.Fatalf("unsupported %#v", val.String())
+		panic("unsupported %#v", val.String())
 	}
 
 	return xv
@@ -312,7 +300,7 @@ func xpcToGo(v C.xpc_object_t) interface{} {
 		return UUID(a[:])
 
 	default:
-		log.Fatalf("unexpected type %#v, value %#v", t, v)
+		panic("unexpected type %#v, value %#v", t, v)
 	}
 
 	return nil
