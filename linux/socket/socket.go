@@ -33,7 +33,7 @@ const (
 
 var (
 	ErrSocketOpenFailed  = errors.New("unable to open bluetooth socket to device")
-	ErrSocketBindTimeout = errors.New("timeout occured binding to bluetooth device")
+	ErrSocketBindTimeout = errors.New("timeout occurred binding to bluetooth device")
 )
 
 type _Socklen uint32

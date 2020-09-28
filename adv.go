@@ -136,7 +136,7 @@ func (a *Advertisement) unmarshall(b []byte) error {
 	return nil
 }
 
-// AdvPacket is an utility to help crafting advertisment or scan response data.
+// AdvPacket is a utility to help crafting advertisement or scan response data.
 type AdvPacket struct {
 	b []byte
 }

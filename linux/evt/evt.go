@@ -57,7 +57,7 @@ const (
 	AuthenticationComplete                       = 0x06 // Authentication
 	RemoteNameReqComplete                        = 0x07 // Remote Name Request Complete
 	EncryptionChange                             = 0x08 // Encryption Change
-	ChangeConnectionLinkKeyComplete              = 0x09 // Change Conection Link Key Complete
+	ChangeConnectionLinkKeyComplete              = 0x09 // Change Connection Link Key Complete
 	MasterLinkKeyComplete                        = 0x0A // Master Link Keye Complete
 	ReadRemoteSupportedFeaturesComplete          = 0x0B // Read Remote Supported Features Complete
 	ReadRemoteVersionInformationComplete         = 0x0C // Read Remote Version Information Complete
@@ -65,7 +65,7 @@ const (
 	CommandComplete                              = 0x0E // Command Complete
 	CommandStatus                                = 0x0F // Command status
 	HardwareError                                = 0x10 // Hardware Error
-	FlushOccurred                                = 0x11 // Flush Occured
+	FlushOccurred                                = 0x11 // Flush Occurred
 	RoleChange                                   = 0x12 // Role Change
 	NumberOfCompletedPkts                        = 0x13 // Number Of Completed Packets
 	ModeChange                                   = 0x14 // Mode Change

@@ -94,7 +94,7 @@ func (a attEcode) Error() string {
 	case i >= 0xE0 && i <= 0xFF: // Common profile and service error codes
 		return "profile or service error"
 	default: // can't happen, just make compiler happy
-		return "unkown error"
+		return "unknown error"
 	}
 }
 

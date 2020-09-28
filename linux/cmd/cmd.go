@@ -333,7 +333,7 @@ const (
 	opLELTKReply                          = leCtl<<10 | 0x001a // LE Long Term Key Request Reply
 	opLELTKNegReply                       = leCtl<<10 | 0x001b // LE Long Term Key Request Negative Reply
 	opLEReadSupportedStates               = leCtl<<10 | 0x001c // LE Read Supported States
-	opLEReceiverTest                      = leCtl<<10 | 0x001d // LE Reciever Test
+	opLEReceiverTest                      = leCtl<<10 | 0x001d // LE Receiver Test
 	opLETransmitterTest                   = leCtl<<10 | 0x001e // LE Transmitter Test
 	opLETestEnd                           = leCtl<<10 | 0x001f // LE Test End
 	opLERemoteConnectionParameterReply    = leCtl<<10 | 0x0020 // LE Remote Connection Parameter Request Reply
@@ -910,7 +910,7 @@ type LEReadSupportedStatesRP struct {
 	LEStates [8]byte
 }
 
-// LE Reciever Test (0x001D)
+// LE Receiver Test (0x001D)
 type LEReceiverTest struct{ RxChannel uint8 }
 
 func (c LEReceiverTest) Opcode() int      { return opLEReceiverTest }

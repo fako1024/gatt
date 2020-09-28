@@ -63,7 +63,7 @@ type Device interface {
 	// It removes all currently added services, if any.
 	SetServices(ss []*Service) error
 
-	// Scan discovers surounding remote peripherals that have the Service UUID specified in ss.
+	// Scan discovers surrounding remote peripherals that have the Service UUID specified in ss.
 	// If ss is set to nil, all devices scanned are reported.
 	// dup specifies weather duplicated advertisement should be reported or not.
 	// When a remote peripheral is discovered, the PeripheralDiscovered Handler is called.
@@ -102,7 +102,7 @@ type deviceHandler struct {
 	// peripheralConnected is called when a remote peripheral is conneted.
 	peripheralConnected func(p Peripheral, err error)
 
-	// peripheralConnected is called when a remote peripheral is disconneted.
+	// peripheralConnected is called when a remote peripheral is disconnected.
 	peripheralDisconnected func(p Peripheral, err error)
 }
 

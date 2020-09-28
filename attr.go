@@ -9,7 +9,7 @@ type attr struct {
 	secure Property // attribute secure (implementation specific usage)
 	value  []byte   // attribute value
 
-	pvt interface{} // point to the corresponsing Serveice/Characteristic/Descriptor
+	pvt interface{} // point to the corresponding Service/Characteristic/Descriptor
 }
 
 // A attrRange is a contiguous range of attributes.
