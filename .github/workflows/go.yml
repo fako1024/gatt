@@ -26,6 +26,7 @@ jobs:
       run: go test -v ./...
 
   build-macos:
+    name: Build on Darwin
     runs-on: macos-latest
     steps:
     - name: Set up Go
