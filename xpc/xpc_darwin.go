@@ -139,7 +139,7 @@ func GetUUID(v interface{}) UUID {
 		return uuid
 	}
 
-	panic("invalid type for UUID: %#v", v)
+	panic(fmt.Sprintf("invalid type for UUID: %#v", v))
 	return UUID{}
 }
 
@@ -250,7 +250,7 @@ func valueToXpc(val r.Value) C.xpc_object_t {
 		xv = valueToXpc(val.Elem())
 
 	default:
-		panic("unsupported %#v", val.String())
+		panic(fmt.Sprintf("unsupported value in conversion to Xpc: %s", val.String()))
 	}
 
 	return xv
@@ -300,7 +300,7 @@ func xpcToGo(v C.xpc_object_t) interface{} {
 		return UUID(a[:])
 
 	default:
-		panic("unexpected type %#v, value %#v", t, v)
+		panic(fmt.Sprintf("unexpected type in conversion from xpc to Go: %#v, value %#v", t, v))
 	}
 
 	return nil
