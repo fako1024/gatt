@@ -4,13 +4,12 @@ import (
 	"testing"
 )
 
-func CheckUUID(t *testing.T, v interface{}) UUID {
+func CheckUUID(t *testing.T, v interface{}) (uuid UUID) {
 	if uuid, ok := v.(UUID); ok {
 		return uuid
-	} else {
-		t.Errorf("not a UUID: %#v\n", v)
-		return uuid
 	}
+	t.Errorf("not a UUID: %#v\n", v)
+	return uuid
 }
 
 func TestConvertUUID(t *testing.T) {
@@ -93,9 +92,22 @@ func TestConvertMap(t *testing.T) {
 		fail := false
 
 		for k, v := range d {
-			if v != d2[k] {
-				t.Logf("expected map[%s]: %#v got %#v\n", k, v, d2[k])
-				fail = true
+			switch got := d2[k].(type) {
+			case int64:
+				if v.(int64) != got {
+					t.Logf("expected map[%s]: %#v got %#v\n", k, v, got)
+					fail = true
+				}
+			case string:
+				if v.(string) != got {
+					t.Logf("expected map[%s]: %#v got %#v\n", k, v, got)
+					fail = true
+				}
+			case UUID:
+				if v.(UUID).String() != got.String() {
+					t.Logf("expected map[%s]: %#v got %#v\n", k, v, got)
+					fail = true
+				}
 			}
 		}
 
