@@ -117,14 +117,18 @@ func TestConvertMap(t *testing.T) {
 	}
 }
 
-type dummyDevice struct{}
+type dummyDevice struct {
+	p *int
+}
 
 func (d dummyDevice) HandleXpcEvent(event Dict, err error) {
 	return
 }
 
 func TestConnect(t *testing.T) {
-	var d dummyDevice
+	d := dummyDevice{
+		p: new(int),
+	}
 	dev := XpcConnect("com.dummy", d)
 	_ = dev
 }

@@ -11,6 +11,8 @@ import (
 	"fmt"
 	r "reflect"
 	"unsafe"
+
+	gopointer "github.com/mattn/go-pointer"
 )
 
 type XPC struct {
@@ -159,7 +161,9 @@ type XpcEventHandler interface {
 func XpcConnect(service string, eh XpcEventHandler) XPC {
 	cservice := C.CString(service)
 	defer C.free(unsafe.Pointer(cservice))
-	return XPC{conn: C.XpcConnect(cservice, C.uintptr_t(uintptr(unsafe.Pointer(&eh))))}
+
+	callback := gopointer.Save(eh)
+	return XPC{conn: C.XpcConnect(cservice, callback)}
 }
 
 //export handleXpcEvent
