@@ -162,15 +162,14 @@ func XpcConnect(service string, eh XpcEventHandler) XPC {
 	cservice := C.CString(service)
 	defer C.free(unsafe.Pointer(cservice))
 
-	callback := gopointer.Save(eh)
-	return XPC{conn: C.XpcConnect(cservice, callback)}
+	return XPC{conn: C.XpcConnect(cservice, gopointer.Save(eh))}
 }
 
 //export handleXpcEvent
 func handleXpcEvent(event C.xpc_object_t, p unsafe.Pointer) {
 
 	t := C.xpc_get_type(event)
-	eh := *((*XpcEventHandler)(p))
+	eh := gopointer.Restore(p).(XpcEventHandler)
 
 	if t == C.TYPE_ERROR {
 		if event == C.ERROR_CONNECTION_INVALID {
