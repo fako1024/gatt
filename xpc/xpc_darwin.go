@@ -188,7 +188,9 @@ func handleXpcEvent(event C.xpc_object_t, p unsafe.Pointer) {
 			eh.HandleXpcEvent(nil, fmt.Errorf("%v", event))
 		}
 	} else {
-		eh.HandleXpcEvent(xpcToGo(event).(Dict), nil)
+		if dict, isDict := xpcToGo(event).(Dict); isDict {
+			eh.HandleXpcEvent(dict, nil)
+		}
 	}
 }
 

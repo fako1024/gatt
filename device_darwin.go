@@ -394,6 +394,9 @@ func (d *device) HandleXpcEvent(event xpc.Dict, err error) {
 			return
 		}
 		u := UUID{args.MustGetUUID("kCBMsgArgDeviceUUID")}
+		if u.Len() == 0 {
+			return
+		}
 		a := &Advertisement{
 			LocalName:        xa.GetString("kCBAdvDataLocalName", args.GetString("kCBMsgArgName", "")),
 			TxPowerLevel:     xa.GetInt("kCBAdvDataTxPowerLevel", 0),
@@ -424,6 +427,9 @@ func (d *device) HandleXpcEvent(event xpc.Dict, err error) {
 
 	case peripheralConnected:
 		u := UUID{args.MustGetUUID("kCBMsgArgDeviceUUID")}
+		if u.Len() == 0 {
+			return
+		}
 		p := &peripheral{
 			id:    xpc.UUID(u.b),
 			d:     d,
@@ -443,6 +449,9 @@ func (d *device) HandleXpcEvent(event xpc.Dict, err error) {
 
 	case peripheralDisconnected:
 		u := UUID{args.MustGetUUID("kCBMsgArgDeviceUUID")}
+		if u.Len() == 0 {
+			return
+		}
 		d.plistmu.Lock()
 		p := d.plist[u.String()]
 		delete(d.plist, u.String())
@@ -465,6 +474,9 @@ func (d *device) HandleXpcEvent(event xpc.Dict, err error) {
 		descriptorWritten:
 
 		u := UUID{args.MustGetUUID("kCBMsgArgDeviceUUID")}
+		if u.Len() == 0 {
+			return
+		}
 		d.plistmu.Lock()
 		p := d.plist[u.String()]
 		d.plistmu.Unlock()
