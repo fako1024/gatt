@@ -11,6 +11,8 @@ import (
 	"fmt"
 	r "reflect"
 	"unsafe"
+
+	gopointer "github.com/mattn/go-pointer"
 )
 
 type XPC struct {
