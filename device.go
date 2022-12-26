@@ -142,6 +142,81 @@ func PeripheralDisconnected(f func(Peripheral, error)) Handler {
 	return func(d Device) { d.(*device).peripheralDisconnected = f }
 }
 
+// AddCentralConnected returns a Handler, which adds the specified function to be called when a device connects to the server.
+func AddCentralConnected(f func(Central)) Handler {
+	return func(d Device) {
+		if fn := d.(*device).centralConnected; fn != nil {
+			d.(*device).centralConnected = func(c Central) {
+				fn(c)
+				f(c)
+			}
+			return
+		}
+
+		d.(*device).centralConnected = f
+	}
+}
+
+// AddCentralDisconnected returns a Handler, which adds a specified function to be called when a device disconnects from the server.
+func AddCentralDisconnected(f func(Central)) Handler {
+	return func(d Device) {
+		if fn := d.(*device).centralDisconnected; fn != nil {
+			d.(*device).centralDisconnected = func(c Central) {
+				fn(c)
+				f(c)
+			}
+			return
+		}
+
+		d.(*device).centralDisconnected = f
+	}
+}
+
+// PeripheralDiscovered returns a Handler, which adds the specified function to be called when a remote peripheral device is found during scan procedure.
+func AddPeripheralDiscovered(f func(Peripheral, *Advertisement, int)) Handler {
+	return func(d Device) {
+		if fn := d.(*device).peripheralDiscovered; fn != nil {
+			d.(*device).peripheralDiscovered = func(p Peripheral, a *Advertisement, rssi int) {
+				fn(p, a, rssi)
+				f(p, a, rssi)
+			}
+			return
+		}
+
+		d.(*device).peripheralDiscovered = f
+	}
+}
+
+// AddPeripheralConnected returns a Handler, which adds the specified function to be called when a remote peripheral device connects.
+func AddPeripheralConnected(f func(Peripheral, error)) Handler {
+	return func(d Device) {
+		if fn := d.(*device).peripheralConnected; fn != nil {
+			d.(*device).peripheralConnected = func(p Peripheral, err error) {
+				fn(p, err)
+				f(p, err)
+			}
+			return
+		}
+
+		d.(*device).peripheralConnected = f
+	}
+}
+
+// AddPeripheralDisconnected returns a Handler, which adds the specified function to be called when a remote peripheral device disconnects.
+func AddPeripheralDisconnected(f func(Peripheral, error)) Handler {
+	return func(d Device) {
+		if fn := d.(*device).peripheralDisconnected; fn != nil {
+			d.(*device).peripheralDisconnected = func(p Peripheral, err error) {
+				fn(p, err)
+				f(p, err)
+			}
+			return
+		}
+
+		d.(*device).peripheralDisconnected = f
+	}
+}
+
 // An Option is a self-referential function, which sets the option specified.
 // Most Options are platform-specific, which gives more fine-grained control over the device at a cost of losing portibility.
 // See http://commandcenter.blogspot.com.au/2014/01/self-referential-functions-and-design.html for more discussion.
