@@ -142,8 +142,7 @@ func (d *device) StopAdvertising() error {
 }
 
 func (d *device) RemoveAllServices() error {
-	d.sendCmd(12, nil)
-	return nil
+	return d.sendCmd(12, nil)
 }
 
 func (d *device) AddService(s *Service) error {
@@ -239,31 +238,35 @@ func (d *device) AddService(s *Service) error {
 }
 
 func (d *device) SetServices(ss []*Service) error {
-	d.RemoveAllServices()
+	if err := d.RemoveAllServices(); err != nil {
+		return err
+	}
 	for _, s := range ss {
-		d.AddService(s)
+		if err := d.AddService(s); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func (d *device) Scan(ss []UUID, dup bool) {
+func (d *device) Scan(ss []UUID, dup bool) error {
 	args := xpc.Dict{
 		"kCBMsgArgUUIDs": uuidSlice(ss),
 		"kCBMsgArgOptions": xpc.Dict{
 			"kCBScanOptionAllowDuplicates": map[bool]int{true: 1, false: 0}[dup],
 		},
 	}
-	d.sendCmd(29, args)
+	return d.sendCmd(29, args)
 }
 
-func (d *device) StopScanning() {
-	d.sendCmd(30, nil)
+func (d *device) StopScanning() error {
+	return d.sendCmd(30, nil)
 }
 
-func (d *device) Connect(p Peripheral) {
+func (d *device) Connect(p Peripheral) error {
 	pp := p.(*peripheral)
 	d.plist[pp.id.String()] = pp
-	d.sendCmd(31,
+	return d.sendCmd(31,
 		xpc.Dict{
 			"kCBMsgArgDeviceUUID": pp.id,
 			"kCBMsgArgOptions": xpc.Dict{
@@ -358,8 +361,8 @@ func (d *device) respondToRequest(id int, args xpc.Dict) {
 	}
 }
 
-func (d *device) CancelConnection(p Peripheral) {
-	d.sendCmd(32, xpc.Dict{"kCBMsgArgDeviceUUID": p.(*peripheral).id})
+func (d *device) CancelConnection(p Peripheral) error {
+	return d.sendCmd(32, xpc.Dict{"kCBMsgArgDeviceUUID": p.(*peripheral).id})
 }
 
 // process device events and asynchronous errors
@@ -490,8 +493,9 @@ func (d *device) sendReq(id int, args xpc.Dict) xpc.Dict {
 	return <-m.rspc
 }
 
-func (d *device) sendCmd(id int, args xpc.Dict) {
+func (d *device) sendCmd(id int, args xpc.Dict) error {
 	d.reqc <- message{id: id, args: args}
+	return nil
 }
 
 func (d *device) loop() {

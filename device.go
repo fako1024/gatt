@@ -1,6 +1,8 @@
 package gatt
 
-import "errors"
+import (
+	"errors"
+)
 
 var notImplemented = errors.New("not implemented")
 
@@ -67,19 +69,22 @@ type Device interface {
 	// If ss is set to nil, all devices scanned are reported.
 	// dup specifies weather duplicated advertisement should be reported or not.
 	// When a remote peripheral is discovered, the PeripheralDiscovered Handler is called.
-	Scan(ss []UUID, dup bool)
+	Scan(ss []UUID, dup bool) error
 
 	// StopScanning stops scanning.
-	StopScanning()
+	StopScanning() error
 
 	// Connect connects to a remote peripheral.
-	Connect(p Peripheral)
+	Connect(p Peripheral) error
 
 	// CancelConnection disconnects a remote peripheral.
-	CancelConnection(p Peripheral)
+	CancelConnection(p Peripheral) error
 
 	// Handle registers the specified handlers.
 	Handle(h ...Handler)
+
+	// Close closes the device
+	Close() error
 
 	// Option sets the options specified.
 	Option(o ...Option) error

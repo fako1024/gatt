@@ -103,15 +103,29 @@ func (d *device) Init(f func(Device, State)) error {
 		}
 	}
 	d.state = StatePoweredOn
-	d.stateChanged = f
+
+	// Set / update the device state change handler
+	if fn := d.stateChanged; fn != nil {
+		d.stateChanged = func(d Device, st State) {
+			fn(d, st)
+			f(d, st)
+		}
+	} else {
+		d.stateChanged = f
+	}
+
 	go d.stateChanged(d, d.state)
 	return nil
 }
 
-func (d *device) Stop() error {
+func (d *device) Close() error {
 	d.state = StatePoweredOff
 	defer d.stateChanged(d, d.state)
 	return d.hci.Close()
+}
+
+func (d *device) Stop() error {
+	return d.Close()
 }
 
 func (d *device) AddService(s *Service) error {
@@ -193,21 +207,21 @@ func (d *device) StopAdvertising() error {
 	return d.hci.SetAdvertiseEnable(false)
 }
 
-func (d *device) Scan(ss []UUID, dup bool) {
+func (d *device) Scan(ss []UUID, dup bool) error {
 	// TODO: filter
-	d.hci.SetScanEnable(true, dup)
+	return d.hci.SetScanEnable(true, dup)
 }
 
-func (d *device) StopScanning() {
-	d.hci.SetScanEnable(false, true)
+func (d *device) StopScanning() error {
+	return d.hci.SetScanEnable(false, true)
 }
 
-func (d *device) Connect(p Peripheral) {
-	d.hci.Connect(p.(*peripheral).pd)
+func (d *device) Connect(p Peripheral) error {
+	return d.hci.Connect(p.(*peripheral).pd)
 }
 
-func (d *device) CancelConnection(p Peripheral) {
-	d.hci.CancelConnection(p.(*peripheral).pd)
+func (d *device) CancelConnection(p Peripheral) error {
+	return d.hci.CancelConnection(p.(*peripheral).pd)
 }
 
 func (d *device) SendHCIRawCommand(c cmd.CmdParam) ([]byte, error) {
