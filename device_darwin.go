@@ -145,6 +145,10 @@ func (d *device) RemoveAllServices() error {
 	return d.sendCmd(12, nil)
 }
 
+func (d *device) Close() error {
+	return nil
+}
+
 func (d *device) AddService(s *Service) error {
 	if s.uuid.Equal(attrGAPUUID) || s.uuid.Equal(attrGATTUUID) {
 		// skip GATT and GAP services
