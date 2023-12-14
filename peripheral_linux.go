@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/fako1024/gatt/linux"
 )
@@ -61,7 +62,7 @@ func (p *peripheral) DiscoverServices(s []UUID) ([]*Service, error) {
 		binary.LittleEndian.PutUint16(b[3:5], 0xFFFF)
 		binary.LittleEndian.PutUint16(b[5:7], 0x2800)
 
-		b = p.sendReq(op, b)
+		b, _ = p.sendReq(op, b)
 		if b == nil {
 			return nil, ErrDisconnected
 		}
@@ -112,7 +113,7 @@ func (p *peripheral) DiscoverCharacteristics(cs []UUID, s *Service) ([]*Characte
 		binary.LittleEndian.PutUint16(b[3:5], s.endh)
 		binary.LittleEndian.PutUint16(b[5:7], 0x2803)
 
-		b = p.sendReq(op, b)
+		b, _ = p.sendReq(op, b)
 		if b == nil {
 			return nil, ErrDisconnected
 		}
@@ -175,7 +176,7 @@ func (p *peripheral) DiscoverDescriptors(ds []UUID, c *Characteristic) ([]*Descr
 		binary.LittleEndian.PutUint16(b[1:3], start)
 		binary.LittleEndian.PutUint16(b[3:5], c.endh)
 
-		b = p.sendReq(op, b)
+		b, _ = p.sendReq(op, b)
 		if b == nil {
 			return nil, ErrDisconnected
 		}
@@ -217,7 +218,7 @@ func (p *peripheral) ReadCharacteristic(c *Characteristic) ([]byte, error) {
 	b[0] = op
 	binary.LittleEndian.PutUint16(b[1:3], c.vh)
 
-	b = p.sendReq(op, b)
+	b, _ = p.sendReq(op, b)
 	if b == nil {
 		return nil, ErrDisconnected
 	}
@@ -248,7 +249,7 @@ func (p *peripheral) ReadLongCharacteristic(c *Characteristic) ([]byte, error) {
 		binary.LittleEndian.PutUint16(b[1:3], c.vh)
 		binary.LittleEndian.PutUint16(b[3:5], off)
 
-		b = p.sendReq(op, b)
+		b, _ = p.sendReq(op, b)
 		if b == nil {
 			return nil, ErrDisconnected
 		}
@@ -279,7 +280,7 @@ func (p *peripheral) WriteCharacteristic(c *Characteristic, value []byte, noRsp 
 		p.sendCmd(op, b)
 		return nil
 	}
-	b = p.sendReq(op, b)
+	b, _ = p.sendReq(op, b)
 	if b == nil {
 		return ErrDisconnected
 	}
@@ -294,7 +295,7 @@ func (p *peripheral) ReadDescriptor(d *Descriptor) ([]byte, error) {
 	b[0] = op
 	binary.LittleEndian.PutUint16(b[1:3], d.h)
 
-	b = p.sendReq(op, b)
+	b, _ = p.sendReq(op, b)
 	if b == nil {
 		return nil, ErrDisconnected
 	}
@@ -310,7 +311,7 @@ func (p *peripheral) WriteDescriptor(d *Descriptor, value []byte) error {
 	binary.LittleEndian.PutUint16(b[1:3], d.h)
 	copy(b[3:], value)
 
-	b = p.sendReq(op, b)
+	b, _ = p.sendReq(op, b)
 	if b == nil {
 		return ErrDisconnected
 	}
@@ -335,7 +336,7 @@ func (p *peripheral) setNotifyValue(c *Characteristic, flag uint16,
 	binary.LittleEndian.PutUint16(b[1:3], c.cccd.h)
 	binary.LittleEndian.PutUint16(b[3:5], ccc)
 
-	b = p.sendReq(op, b)
+	b, _ = p.sendReq(op, b)
 	if b == nil {
 		return ErrDisconnected
 	}
@@ -378,14 +379,28 @@ type message struct {
 	rspc chan []byte
 }
 
-func (p *peripheral) sendCmd(op byte, b []byte) {
-	p.reqc <- message{op: op, b: b}
+func (p *peripheral) sendCmd(op byte, b []byte) error {
+	select {
+	case p.reqc <- message{op: op, b: b}:
+		return nil
+	case <-time.After(p.d.msgTimeout):
+		return ErrTimeout
+	}
 }
 
-func (p *peripheral) sendReq(op byte, b []byte) []byte {
+func (p *peripheral) sendReq(op byte, b []byte) ([]byte, error) {
 	m := message{op: op, b: b, rspc: make(chan []byte)}
-	p.reqc <- m
-	return <-m.rspc
+	select {
+	case p.reqc <- m:
+		select {
+		case res := <-m.rspc:
+			return res, nil
+		case <-time.After(p.d.msgTimeout):
+			return nil, ErrTimeout
+		}
+	case <-time.After(p.d.msgTimeout):
+		return nil, ErrTimeout
+	}
 }
 
 func (p *peripheral) loop() {
@@ -463,7 +478,7 @@ func (p *peripheral) SetMTU(mtu uint16) error {
 	b[0] = op
 	binary.LittleEndian.PutUint16(b[1:3], uint16(mtu))
 
-	b = p.sendReq(op, b)
+	b, _ = p.sendReq(op, b)
 	if b == nil {
 		return ErrDisconnected
 	}

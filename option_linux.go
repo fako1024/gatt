@@ -3,6 +3,7 @@ package gatt
 import (
 	"errors"
 	"io"
+	"time"
 
 	"github.com/fako1024/gatt/linux/cmd"
 )
@@ -83,5 +84,15 @@ func LnxSendHCIRawCommand(c cmd.CmdParam, rsp io.Writer) Option {
 		}
 		rsp.Write(b)
 		return err
+	}
+}
+
+// LnxMsgTimeout is an optional parameter.
+// If set, it overrides the default (basically infinite) timeout for command / message handling
+// This option can be used with NewDevice or Option on Linux implementation.
+func LnxMsgTimeout(timeout time.Duration) Option {
+	return func(d Device) error {
+		d.(*device).msgTimeout = timeout
+		return nil
 	}
 }

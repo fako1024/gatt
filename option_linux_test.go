@@ -2,6 +2,7 @@ package gatt
 
 import (
 	"bytes"
+	"time"
 
 	"github.com/fako1024/gatt/linux/cmd"
 )
@@ -12,6 +13,10 @@ func ExampleLnxDeviceID() {
 
 func ExampleLnxMaxConnections() {
 	NewDevice(LnxMaxConnections(1)) // Can only be used with NewDevice.
+}
+
+func ExampleLnxMsgTimeout() {
+	NewDevice(LnxMsgTimeout(time.Second)) // Can only be used with NewDevice.
 }
 
 func ExampleLnxSetAdvertisingEnable() {

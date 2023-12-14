@@ -3,6 +3,7 @@ package gatt
 import (
 	"encoding/binary"
 	"net"
+	"time"
 
 	"github.com/fako1024/gatt/linux"
 	"github.com/fako1024/gatt/linux/cmd"
@@ -18,9 +19,10 @@ type device struct {
 	svcs  []*Service
 	attrs *attrRange
 
-	devID   int
-	chkLE   bool
-	maxConn int
+	devID      int
+	chkLE      bool
+	maxConn    int
+	msgTimeout time.Duration
 
 	advData   *cmd.LESetAdvertisingData
 	scanResp  *cmd.LESetScanResponseData
@@ -30,9 +32,10 @@ type device struct {
 
 func NewDevice(opts ...Option) (Device, error) {
 	d := &device{
-		maxConn: 1,    // Support 1 connection at a time.
-		devID:   -1,   // Find an available HCI device.
-		chkLE:   true, // Check if the device supports LE.
+		maxConn:    1,                  // Support 1 connection at a time.
+		devID:      -1,                 // Find an available HCI device.
+		chkLE:      true,               // Check if the device supports LE.
+		msgTimeout: 999999 * time.Hour, // Set a very high (practically infinite) default timeout
 
 		advParam: &cmd.LESetAdvertisingParameters{
 			AdvertisingIntervalMin:  0x800,     // [0x0800]: 0.625 ms * 0x0800 = 1280.0 ms
